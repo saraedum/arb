@@ -21,63 +21,69 @@ static const char* arf_serialized_nan = "0 -3";
 char *
 arf_dump_str(const arf_t x)
 {
-  if (arf_is_special(x))
-  {
-    const char* ret;
-    if (arf_is_zero(x))
+    size_t res_len;
+    char * res;
+
+    if (arf_is_special(x))
     {
-      ret = arf_serialized_zero;
-    }
-    else if (arf_is_pos_inf(x))
-    {
-      ret = arf_serialized_pos_inf;
-    }
-    else if (arf_is_neg_inf(x))
-    {
-      ret = arf_serialized_neg_inf;
-    }
-    else if (arf_is_nan(x))
-    {
-      ret = arf_serialized_nan;
+        const char* ret;
+        if (arf_is_zero(x))
+        {
+            ret = arf_serialized_zero;
+        }
+        else if (arf_is_pos_inf(x))
+        {
+            ret = arf_serialized_pos_inf;
+        }
+        else if (arf_is_neg_inf(x))
+        {
+            ret = arf_serialized_neg_inf;
+        }
+        else if (arf_is_nan(x))
+        {
+            ret = arf_serialized_nan;
+        }
+        else
+        {
+            /* Impossible to happen; all the special values have been treated above. */
+            flint_abort();
+        }
+
+        res_len = strlen(ret);
+        res = (char*)flint_malloc(res_len + 1);
+        strcpy(res, ret);
     }
     else
     {
-      // Impossible to happen; all the special values have been treated above.
-      flint_abort();
+        fmpz_t mantissa, exponent;
+
+        fmpz_init(mantissa);
+        fmpz_init(exponent);
+
+        arf_get_fmpz_2exp(mantissa, exponent, x);
+
+        res_len = (fmpz_sgn(mantissa) < 0) + fmpz_sizeinbase(mantissa, 16) + 1
+            + (fmpz_sgn(exponent) < 0) + fmpz_sizeinbase(exponent, 16);
+        res = (char*)flint_malloc(res_len + 1);
+
+        fmpz_get_str(res, 16, mantissa);
+        strcat(res, " ");
+        fmpz_get_str(res + strlen(res), 16, exponent);
+
+        fmpz_clear(mantissa);
+        fmpz_clear(exponent);
     }
-    char* res = (char*)flint_malloc(strlen(ret) + 1);
-    strcpy(res, ret);
-    return res;
-  }
-  else
-  {
-    fmpz_t mantissa, exponent;
-
-    fmpz_init(mantissa);
-    fmpz_init(exponent);
-
-    arf_get_fmpz_2exp(mantissa, exponent, x);
-
-    size_t res_len = (fmpz_sgn(mantissa) < 0) + fmpz_sizeinbase(mantissa, 16) + 1
-        + (fmpz_sgn(exponent) < 0) + fmpz_sizeinbase(exponent, 16);
-    char* res = (char*)flint_malloc(res_len + 1);
-
-    fmpz_get_str(res, 16, mantissa);
-    strcat(res, " ");
-    fmpz_get_str(res + strlen(res), 16, exponent);
-
-    fmpz_clear(mantissa);
-    fmpz_clear(exponent);
 
     if(strlen(res) != res_len) flint_abort(); /* assert */
 
     return res;
-  }
 }
 
 int
 arf_load_str(arf_t x, const char* data)
 {
+  int err = 0;
+
   if (strcmp(data, arf_serialized_zero) == 0)
   {
     arf_zero(x);
@@ -97,22 +103,23 @@ arf_load_str(arf_t x, const char* data)
   else
   {
     fmpz_t mantissa, exponent;
+    char * e_str;
+    char * m_str;
 
     fmpz_init(mantissa);
     fmpz_init(exponent);
 
-    const char* e_str = strchr(data, ' ');
-
+    e_str = strchr(data, ' ');
     if (e_str == NULL)
     {
       return 1;
     }
 
-    char* m_str = (char*)flint_malloc(e_str - data + 1);
+    m_str = (char*)flint_malloc(e_str - data + 1);
     strncpy(m_str, data, e_str - data);
     m_str[e_str - data] = '\0';
 
-    int err = fmpz_set_str(mantissa, m_str, 16);
+    err = fmpz_set_str(mantissa, m_str, 16);
 
     flint_free(m_str);
 
@@ -138,5 +145,5 @@ arf_load_str(arf_t x, const char* data)
     fmpz_clear(mantissa);
   }
 
-  return 0;
+  return err;
 }

@@ -18,19 +18,24 @@
 char *
 arb_dump_str(const arb_t x)
 {
-  char* mid = arf_dump_str(arb_midref(x));
-  char* mag = mag_dump_str(arb_radref(x));
+    char * mid;
+    char * mag;
+    size_t res_len;
+    char * res;
 
-  size_t res_len = strlen(mid) + 1 + strlen(mag);
-  char* res = (char*)flint_malloc(res_len + 1);
-  strcpy(res, mid);
-  strcat(res, " ");
-  strcat(res, mag);
+    mid = arf_dump_str(arb_midref(x));
+    mag = mag_dump_str(arb_radref(x));
 
-  flint_free(mid);
-  flint_free(mag);
+    res_len = strlen(mid) + 1 + strlen(mag);
+    res = (char*)flint_malloc(res_len + 1);
+    strcpy(res, mid);
+    strcat(res, " ");
+    strcat(res, mag);
 
-  if(strlen(res) != res_len) flint_abort(); /* assert */
+    flint_free(mid);
+    flint_free(mag);
 
-  return res;
+    if(strlen(res) != res_len) flint_abort(); /* assert */
+
+    return res;
 }

@@ -15,10 +15,12 @@
 char *
 mag_dump_str(const mag_t x)
 {
-  arf_t y;
-  arf_init(y);
-  arf_set_mag(y, x);
-  char* res = arf_dump_str(y);
-  arf_clear(y);
-  return res;
+    char * res;
+    arf_t y;
+
+    arf_init(y);
+    arf_set_mag(y, x);
+    res = arf_dump_str(y);
+    arf_clear(y);
+    return res;
 }

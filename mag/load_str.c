@@ -18,10 +18,12 @@
 int
 mag_load_str(mag_t x, const char* data)
 {
+    int err;
     arf_t y;
+
     arf_init(y);
 
-    int err = arf_load_str(y, data);
+    err = arf_load_str(y, data);
     if (err)
     {
         arf_clear(y);
@@ -40,7 +42,7 @@ mag_load_str(mag_t x, const char* data)
         }
         else
         {
-            // a mag cannot be negative infinity or NaN
+            /* a mag cannot be negative infinity or NaN */
             flint_abort();
         }
     }
