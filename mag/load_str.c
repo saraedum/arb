@@ -54,7 +54,7 @@ mag_load_str(mag_t x, const char* data)
 
         arf_get_fmpz_2exp(mantissa, exponent, y);
 
-        assert(fmpz_cmp_ui(mantissa, 1 << MAG_BITS) < 0);
+        if(fmpz_cmp_ui(mantissa, 1 << MAG_BITS) >= 0) flint_abort(); /* assert */
 
         mag_set_ui(x, fmpz_get_ui(mantissa));
 
