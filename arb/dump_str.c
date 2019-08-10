@@ -35,7 +35,5 @@ arb_dump_str(const arb_t x)
     flint_free(mid);
     flint_free(mag);
 
-    if(strlen(res) != res_len) flint_abort(); /* assert */
-
     return res;
 }
