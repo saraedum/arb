@@ -18,8 +18,7 @@ mag_dump_str(const mag_t x)
     char * res;
     arf_t y;
 
-    arf_init(y);
-    arf_set_mag(y, x);
+    arf_init_set_mag_shallow(y, x);
     res = arf_dump_str(y);
     arf_clear(y);
     return res;
