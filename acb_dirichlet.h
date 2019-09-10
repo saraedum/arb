@@ -195,6 +195,109 @@ acb_dirichlet_zeta_zero(acb_t res, const fmpz_t n, slong prec)
     acb_dirichlet_zeta_zeros(res, n, 1, prec);
 }
 
+/* Platt zeta zeros */
+
+typedef struct
+{
+    slong len;
+    arb_ptr p;
+    arb_struct Xa;
+    arb_struct Xb;
+}
+acb_dirichlet_platt_c_precomp_struct;
+typedef acb_dirichlet_platt_c_precomp_struct acb_dirichlet_platt_c_precomp_t[1];
+
+typedef struct
+{
+    arb_struct c1;
+    arb_struct c2;
+}
+acb_dirichlet_platt_i_precomp_struct;
+typedef acb_dirichlet_platt_i_precomp_struct acb_dirichlet_platt_i_precomp_t[1];
+
+typedef struct
+{
+    acb_dirichlet_platt_c_precomp_struct pre_c;
+    acb_dirichlet_platt_i_precomp_struct pre_i;
+}
+acb_dirichlet_platt_ws_precomp_struct;
+typedef acb_dirichlet_platt_ws_precomp_struct acb_dirichlet_platt_ws_precomp_t[1];
+
+/* Platt C bound */
+
+void acb_dirichlet_platt_c_precomp_init(acb_dirichlet_platt_c_precomp_t pre,
+    slong sigma, const arb_t h, ulong k, slong prec);
+void acb_dirichlet_platt_c_precomp_clear(acb_dirichlet_platt_c_precomp_t pre);
+void acb_dirichlet_platt_c_bound_precomp(arb_t res,
+    const acb_dirichlet_platt_c_precomp_t pre, slong sigma, const arb_t t0,
+    const arb_t h, slong k, slong prec);
+void acb_dirichlet_platt_c_bound(arb_t res,
+    slong sigma, const arb_t t0, const arb_t h, slong k, slong prec);
+
+/* Platt I bound */
+
+void acb_dirichlet_platt_i_precomp_init(acb_dirichlet_platt_i_precomp_t pre,
+        slong A, const arb_t H, slong sigma, slong prec);
+void acb_dirichlet_platt_i_precomp_clear(acb_dirichlet_platt_i_precomp_t pre);
+void acb_dirichlet_platt_i_bound_precomp(arb_t res,
+    const acb_dirichlet_platt_i_precomp_t pre_i,
+    const acb_dirichlet_platt_c_precomp_t pre_c,
+    const arb_t t0, slong A, const arb_t H, slong sigma, slong prec);
+void acb_dirichlet_platt_i_bound(arb_t res,
+    const arb_t t0, slong A, const arb_t H, slong sigma, slong prec);
+
+/* Platt Gaussian-windowed Whittaker-Shannon interpolation */
+
+void acb_dirichlet_platt_ws_precomp_init(acb_dirichlet_platt_ws_precomp_t pre,
+    slong A, const arb_t H, slong sigma, slong prec);
+void acb_dirichlet_platt_ws_precomp_clear(acb_dirichlet_platt_ws_precomp_t pre);
+void acb_dirichlet_platt_ws_interpolation_precomp(arb_t res, arf_t deriv,
+    const acb_dirichlet_platt_ws_precomp_t pre, const arb_t t0,
+    arb_srcptr p, const fmpz_t T, slong A, slong B, slong Ns_max,
+    const arb_t H, slong sigma, slong prec);
+void acb_dirichlet_platt_ws_interpolation(arb_t res, arf_t deriv,
+    const arb_t t0, arb_srcptr p, const fmpz_t T, slong A, slong B,
+    slong Ns_max, const arb_t H, slong sigma, slong prec);
+void acb_dirichlet_platt_bound_C3(arb_t res, const arb_t t0, slong A,
+    const arb_t H, slong Ns, slong prec);
+
+void acb_dirichlet_platt_scaled_lambda(arb_t res, const arb_t t, slong prec);
+void acb_dirichlet_platt_scaled_lambda_vec(arb_ptr res, const fmpz_t T,
+    slong A, slong B, slong prec);
+
+/* Platt lemma bounds of errors in the DFT grid evaluation of scaled Lambda */
+
+void acb_dirichlet_platt_beta(arb_t res, const arb_t t, slong prec);
+void acb_dirichlet_platt_lemma_32(arb_t out, const arb_t h, const arb_t t0,
+    const arb_t x, slong prec);
+void acb_dirichlet_platt_lemma_A5(arb_t out, slong B, const arb_t h, slong k,
+    slong prec);
+void acb_dirichlet_platt_lemma_A7(arb_t out, slong sigma, const arb_t t0,
+    const arb_t h, slong k, slong A, slong prec);
+void acb_dirichlet_platt_lemma_A9(arb_t out, slong sigma, const arb_t t0,
+    const arb_t h, slong A, slong prec);
+void acb_dirichlet_platt_lemma_A11(arb_t out, const arb_t t0, const arb_t h,
+    slong B, slong prec);
+void acb_dirichlet_platt_lemma_B1(arb_t out, slong sigma, const arb_t t0,
+    const arb_t h, slong J, slong prec);
+void acb_dirichlet_platt_lemma_B2(arb_t out, slong K, const arb_t h,
+    const arb_t xi, slong prec);
+
+/* Platt DFT grid evaluation of scaled Lambda */
+
+void acb_dirichlet_platt_multieval(arb_ptr out, const fmpz_t T, slong A,
+    slong B, const arb_t h, slong J, slong K, slong sigma, slong prec);
+
+/* Platt Hardy Z zeros */
+
+slong _acb_dirichlet_platt_local_hardy_z_zeros(
+    arb_ptr res, const fmpz_t n, slong len,
+    const fmpz_t T, slong A, slong B,
+    const arb_t h, slong J, slong K, slong sigma_grid,
+    slong Ns_max, const arb_t H, slong sigma_interp, slong prec);
+slong acb_dirichlet_platt_local_hardy_z_zeros(
+    arb_ptr res, const fmpz_t n, slong len, slong prec);
+
 /* Discrete Fourier Transform */
 
 void acb_dirichlet_dft_index(acb_ptr w, acb_srcptr v, const dirichlet_group_t G, slong prec);
