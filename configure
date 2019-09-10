@@ -8,7 +8,7 @@
 # soname version
 #
 # arb     => soname
-# 2.8.0   => 0.0.0
+# 2.7.0   => 0.0.0
 ARB_MAJOR=2
 ARB_MINOR=7
 ARB_PATCH=0
