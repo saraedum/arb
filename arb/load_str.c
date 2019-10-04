@@ -46,10 +46,14 @@ arb_load_str(arb_t x, const char* data)
         mag[maglen] = '\0';
 
         err = arf_load_str(arb_midref(x), mid);
-        if (!err)
+        if (err)
         {
-            err = mag_load_str(arb_radref(x), mag);
+            flint_free(mid);
+            flint_free(mag);
+            return err;
         }
+        
+        err = mag_load_str(arb_radref(x), mag);
 
         flint_free(mid);
         flint_free(mag);
