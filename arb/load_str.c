@@ -23,41 +23,39 @@ arb_load_str(arb_t x, const char* data)
     char * mag;
     int err = 0;
 
+    const char* split = strchr(data, ' ');
+    if (split == NULL)
     {
-        const char* split = strchr(data, ' ');
-        if (split == NULL)
-        {
-            return 1;
-        }
-        split = strchr(split + 1, ' ');
-        if (split == NULL)
-        {
-            return 1;
-        }
+        return 1;
+    }
+    split = strchr(split + 1, ' ');
+    if (split == NULL)
+    {
+        return 1;
+    }
 
-        midlen = (size_t)(split - data);
-        mid = (char*)flint_malloc(midlen + 1);
-        strncpy(mid, data, midlen);
-        mid[midlen] = '\0';
+    midlen = (size_t)(split - data);
+    mid = (char*)flint_malloc(midlen + 1);
+    strncpy(mid, data, midlen);
+    mid[midlen] = '\0';
 
-        maglen = strlen(data) - midlen - 1;
-        mag = (char*)flint_malloc(maglen + 1);
-        strncpy(mag, split + 1, maglen);
-        mag[maglen] = '\0';
+    maglen = strlen(data) - midlen - 1;
+    mag = (char*)flint_malloc(maglen + 1);
+    strncpy(mag, split + 1, maglen);
+    mag[maglen] = '\0';
 
-        err = arf_load_str(arb_midref(x), mid);
-        if (err)
-        {
-            flint_free(mid);
-            flint_free(mag);
-            return err;
-        }
-        
-        err = mag_load_str(arb_radref(x), mag);
-
+    err = arf_load_str(arb_midref(x), mid);
+    if (err)
+    {
         flint_free(mid);
         flint_free(mag);
+        return err;
     }
+
+    err = mag_load_str(arb_radref(x), mag);
+
+    flint_free(mid);
+    flint_free(mag);
 
     return err;
 }
