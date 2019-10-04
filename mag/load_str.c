@@ -18,7 +18,7 @@
 int
 mag_load_str(mag_t x, const char* data)
 {
-    int err;
+    int err = 0;
     arf_t y;
 
     arf_init(y);

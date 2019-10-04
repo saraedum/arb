@@ -1011,6 +1011,10 @@ int arb_load_str(arb_t res, const char * data);
 
 char * arb_dump_str(const arb_t x);
 
+int arb_load_file(arb_t res, FILE *stream);
+
+int arb_dump_file(FILE* stream, const arb_t x);
+
 #ifdef __cplusplus
 }
 #endif

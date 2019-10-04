@@ -730,6 +730,10 @@ int mag_load_str(mag_t res, const char * data);
 
 char * mag_dump_str(const mag_t x);
 
+int mag_load_file(mag_t res, FILE *stream);
+
+int mag_dump_file(FILE* stream, const mag_t x);
+
 #ifdef __cplusplus
 }
 #endif
