@@ -26,13 +26,13 @@ int main()
     for (iter = 0; iter < 10000 * arb_test_multiplier(); iter++)
     {
         arb_t x;
-        char * s;
+        FILE* tmp;
 
         arb_init(x);
 
         arb_randtest_special(x, state, 1 + n_randint(state, 1000), 1 + n_randint(state, 100));
 
-        FILE* tmp = tmpfile();
+        tmp = tmpfile();
         arb_dump_file(tmp, x);
         fflush(tmp);
         rewind(tmp);
@@ -45,8 +45,8 @@ int main()
     for (iter = 0; iter < 100000 * arb_test_multiplier(); iter++)
     {
         arb_t x, y;
-        char * s;
         int conversion_error;
+        FILE* tmp;
 
         arb_init(x);
         arb_init(y);
@@ -54,7 +54,7 @@ int main()
         arb_randtest_special(x, state, 1 + n_randint(state, 1000), 1 + n_randint(state, 100));
         arb_randtest_special(y, state, 1 + n_randint(state, 1000), 1 + n_randint(state, 100));
 
-        FILE* tmp = tmpfile();
+        tmp = tmpfile();
         arb_dump_file(tmp, x);
         fflush(tmp);
         rewind(tmp);
@@ -69,7 +69,6 @@ int main()
             flint_abort();
         }
 
-        flint_free(s);
         arb_clear(x);
         arb_clear(y);
     }
