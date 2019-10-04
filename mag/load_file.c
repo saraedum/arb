@@ -16,8 +16,10 @@
 
 int mag_load_file(mag_t x, FILE* stream)
 {
+    char* pos;
     char* data = NULL;
     size_t length = 0;
+    int  ret = 0;
     
     ssize_t nread = getdelim(&data, &length, ' ', stream);
     if (nread == -1)
@@ -25,10 +27,10 @@ int mag_load_file(mag_t x, FILE* stream)
     if (data[nread-1] == ' ')
         data[nread-1] = '\0';
 
-    // replace all '$' with ' '
-    for (char* pos = data; (pos = strchr(pos, '$')) != NULL; *pos = ' ');
+    /* replace all '$' with ' ' */
+    for (pos = data; (pos = strchr(pos, '$')) != NULL; *pos = ' ');
 
-    int ret = mag_load_str(x, data);
+    ret = mag_load_str(x, data);
     free(data);
     return ret;
 }
